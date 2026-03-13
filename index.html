@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Time Converter · Country/State to Timezone</title>
+    <!-- Load moment.js and moment-timezone from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data-10-year-range.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #f5f7fa 0%, #e9ecf0 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 40px -10px rgba(0,20,30,0.25);
+            max-width: 800px;
+            width: 100%;
+            padding: 2rem 2rem 2.5rem;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        h1 {
+            font-weight: 600;
+            font-size: 1.9rem;
+            letter-spacing: -0.02em;
+            margin: 0 0 0.25rem 0;
+            color: #0b2b3b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        h1 span {
+            background: #1e4c6b;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 400;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+        }
+        .sub {
+            color: #2a4f66;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            border-left: 3px solid #6ab0d6;
+            padding-left: 1rem;
+        }
+        .selector-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2.2rem;
+        }
+        .selector-item {
+            flex: 1 1 250px;
+        }
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #1a4d62;
+            margin-bottom: 0.5rem;
+        }
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: white;
+            border: 1px solid #cbd5e0;
+            border-radius: 18px;
+            font-size: 1rem;
+            color: #0f3448;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%231e4c6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+        }
+        select:hover {
+            border-color: #6ab0d6;
+            box-shadow: 0 8px 20px -10px #6ab0d680;
+        }
+        select:focus {
+            outline: none;
+            border-color: #1e6f9f;
+            box-shadow: 0 0 0 3px rgba(30, 111, 159, 0.2);
+        }
+        .time-panel {
+            background: #ffffffd9;
+            backdrop-filter: blur(2px);
+            border-radius: 1.8rem;
+            padding: 1.8rem;
+            margin: 2rem 0 1.5rem;
+            border: 1px solid white;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+        .current-time {
+            background: #dde9f2;
+            border-radius: 40px;
+            padding: 0.5rem 1.2rem;
+            font-size: 1.1rem;
+            color: #0b3f55;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .converter-box {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .datetime-input {
+            flex: 2 1 260px;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: #f2f6fa;
+            border-radius: 50px;
+            padding: 0.25rem 0.25rem 0.25rem 1.5rem;
+            border: 1px solid #c2d9e9;
+        }
+        .datetime-input label {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #1e4c6b;
+            font-weight: 500;
+            text-transform: none;
+        }
+        .datetime-input input {
+            background: white;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            flex: 1;
+            border: 1px solid transparent;
+            transition: 0.1s;
+            min-width: 180px;
+        }
+        .datetime-input input:focus {
+            outline: none;
+            border-color: #2f86b3;
+        }
+        .now-btn {
+            background: #2f86b3;
+            border: none;
+            color: white;
+            padding: 0.6rem 1.4rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.15s;
+            box-shadow: 0 8px 14px -8px #1e5c80;
+            border: 1px solid #ffffff50;
+            white-space: nowrap;
+        }
+        .now-btn:hover {
+            background: #1e6f9f;
+            transform: scale(1.02);
+        }
+        .result-area {
+            background: #edf4fa;
+            border-radius: 2rem;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #032b38;
+            box-shadow: inset 0 1px 5px #b5cedf;
+            word-break: break-word;
+        }
+        .result-label {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #1b5a79;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+        .footnote {
+            font-size: 0.8rem;
+            color: #446b7e;
+            margin-top: 2rem;
+            text-align: center;
+            border-top: 1px dashed #bbd2e0;
+            padding-top: 1.2rem;
+        }
+        .footnote a {
+            color: #124f6b;
+            text-decoration: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>
+            🌍 TimeZone Converter
+            <span>country/state lookup</span>
+        </h1>
+        <div class="sub">
+            Pick your location and the target timezone — see current times and convert any moment.
+        </div>
+
+        <!-- two dropdowns for source and destination timezones -->
+        <div class="selector-grid">
+            <div class="selector-item">
+                <label>📍 Your location (country/state)</label>
+                <select id="fromZone"></select>
+            </div>
+            <div class="selector-item">
+                <label>🎯 Convert to timezone</label>
+                <select id="toZone"></select>
+            </div>
+        </div>
+
+        <!-- live current times (auto‑updated) -->
+        <div class="time-panel">
+            <div class="row">
+                <div class="current-time" id="fromCurrent">—</div>
+                <div style="font-size: 1.2rem; color:#547a92;">➡️</div>
+                <div class="current-time" id="toCurrent">—</div>
+            </div>
+
+            <!-- custom date/time picker + conversion -->
+            <div class="converter-box">
+                <div class="datetime-input">
+                    <label>📅</label>
+                    <input type="datetime-local" id="datetimePicker" value="">
+                </div>
+                <button class="now-btn" id="nowBtn">🔁 Now</button>
+            </div>
+
+            <!-- conversion result display -->
+            <div class="result-area">
+                <div class="result-label" id="conversionDesc">from · to</div>
+                <div id="conversionResult">—</div>
+            </div>
+        </div>
+
+        <div class="footnote">
+            ⚡ timezone data by <a href="https://momentjs.com/timezone/" target="_blank">moment-timezone</a> · 
+            grouped by region — find your country/state easily.<br>
+            <span style="opacity:0.7;">🇺🇸 type “New York” · 🇬🇧 “London” · 🇮🇳 “Kolkata” · 🇦🇺 “Sydney”</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ------------------------------------------------------------
+            // Populate grouped selects with all moment-timezone names
+            // ------------------------------------------------------------
+            const allZones = moment.tz.names();  // e.g. ['America/New_York', ...]
+
+            // group by first part (continent / region)
+            const grouped = {};
+            allZones.forEach(zone => {
+                const parts = zone.split('/');
+                let groupName = parts[0] || 'Other';
+                // handle "Etc", "GMT", etc.
+                if (!grouped[groupName]) grouped[groupName] = [];
+                grouped[groupName].push(zone);
+            });
+
+            // sort groups by name, and zones inside each group alphabetically
+            const sortedGroups = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
+            sortedGroups.forEach(group => {
+                grouped[group].sort((z1, z2) => z1.localeCompare(z2));
+            });
+
+            // function to fill a select element with optgroups
+            function populateSelect(selectEl) {
+                // clear any existing options
+                selectEl.innerHTML = '';
+
+                sortedGroups.forEach(group => {
+                    const optgroup = document.createElement('optgroup');
+                    optgroup.label = group;
+                    grouped[group].forEach(zone => {
+                        const option = document.createElement('option');
+                        option.value = zone;
+                        option.textContent = zone;  // full IANA name
+                        optgroup.appendChild(option);
+                    });
+                    selectEl.appendChild(optgroup);
+                });
+            }
+
+            const fromSelect = document.getElementById('fromZone');
+            const toSelect = document.getElementById('toZone');
+
+            populateSelect(fromSelect);
+            populateSelect(toSelect);
+
+            // ------------------------------------------------------------
+            // set default values: user's local zone for "from", and London/UTC for "to"
+            // ------------------------------------------------------------
+            const localZone = moment.tz.guess();  // e.g. "America/Chicago"
+            if (localZone) {
+                fromSelect.value = localZone;
+            } else {
+                // fallback
+                fromSelect.value = 'America/New_York';
+            }
+            toSelect.value = 'Europe/London';  // common reference
+
+            // ------------------------------------------------------------
+            // Helper: format moment nicely
+            // ------------------------------------------------------------
+            function formatTime(m) {
+                return m.format('YYYY-MM-DD HH:mm:ss dddd');
+            }
+
+            // ------------------------------------------------------------
+            // Update current times (from / to zones) + conversion
+            // ------------------------------------------------------------
+            function updateAll() {
+                const fromZone = fromSelect.value;
+                const toZone = toSelect.value;
+
+                if (!fromZone || !toZone) return;
+
+                // Current moment in each zone
+                const nowFrom = moment.tz(fromZone);
+                const nowTo = moment.tz(toZone);
+
+                document.getElementById('fromCurrent').innerHTML = `📍 ${fromZone} : <strong>${formatTime(nowFrom)}</strong>`;
+                document.getElementById('toCurrent').innerHTML = `🎯 ${toZone} : <strong>${formatTime(nowTo)}</strong>`;
+
+                // Date/time conversion based on picker value (or now if empty)
+                const datetimePicker = document.getElementById('datetimePicker');
+                let inputVal = datetimePicker.value;  // format "YYYY-MM-DDTHH:mm"
+
+                let convertedMoment;
+                if (inputVal && inputVal.length >= 16) {  // basic validation
+                    // replace 'T' with space and parse as local time in the FROM zone
+                    // moment.tz expects ISO string with no Z/offset, interprets it in given zone
+                    const isoLike = inputVal.replace('T', ' ');  // "2025-03-14 13:45"
+                    convertedMoment = moment.tz(isoLike, fromZone);
+                } else {
+                    // fallback to current time in from zone
+                    convertedMoment = nowFrom.clone();
+                }
+
+                // Convert to target zone
+                const convertedInToZone = convertedMoment.clone().tz(toZone);
+
+                // update result area
+                document.getElementById('conversionDesc').innerHTML = 
+                    `${convertedMoment.format('YYYY-MM-DD HH:mm')} (${fromZone}) ➡️ ${toZone}`;
+                document.getElementById('conversionResult').innerHTML = 
+                    `<span style="font-weight:700;">${formatTime(convertedInToZone)}</span>`;
+
+                // sync datetime-local to the from-zone datetime (if input empty we set it)
+                if (!inputVal) {
+                    // set picker to current from-zone date & time (truncate minutes to avoid weird seconds)
+                    const nowStr = nowFrom.format('YYYY-MM-DDTHH:mm');
+                    datetimePicker.value = nowStr;
+                }
+            }
+
+            // ------------------------------------------------------------
+            // "Now" button: set picker to current moment in from zone
+            // ------------------------------------------------------------
+            document.getElementById('nowBtn').addEventListener('click', function() {
+                const fromZone = fromSelect.value;
+                if (!fromZone) return;
+                const nowInFrom = moment.tz(fromZone).format('YYYY-MM-DDTHH:mm');
+                document.getElementById('datetimePicker').value = nowInFrom;
+                updateAll();  // refresh conversion
+            });
+
+            // ------------------------------------------------------------
+            // Attach event listeners
+            // ------------------------------------------------------------
+            fromSelect.addEventListener('change', updateAll);
+            toSelect.addEventListener('change', updateAll);
+            document.getElementById('datetimePicker').addEventListener('input', updateAll);
+
+            // initial update
+            updateAll();
+
+            // optional: also update when page gains focus? not necessary.
+        })();
+    </script>
+</body>
+</html>
