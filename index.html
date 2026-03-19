@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Simple Time Converter · Country/State to Timezone</title>
     <!-- Load moment.js and moment-timezone from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
@@ -19,7 +19,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
+            padding: 0.75rem;
         }
         .card {
             background: rgba(255, 255, 255, 0.8);
@@ -28,7 +28,7 @@
             box-shadow: 0 25px 40px -10px rgba(0,20,30,0.25);
             max-width: 800px;
             width: 100%;
-            padding: 2rem 2rem 2.5rem;
+            padding: 1.8rem 1.8rem 2.2rem;
             border: 1px solid rgba(255,255,255,0.5);
         }
         h1 {
@@ -40,6 +40,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
         h1 span {
             background: #1e4c6b;
@@ -49,10 +50,11 @@
             padding: 0.2rem 0.8rem;
             border-radius: 40px;
             letter-spacing: 0.3px;
+            white-space: nowrap;
         }
         .sub {
             color: #2a4f66;
-            margin-bottom: 2rem;
+            margin-bottom: 1.8rem;
             font-size: 1rem;
             border-left: 3px solid #6ab0d6;
             padding-left: 1rem;
@@ -60,11 +62,12 @@
         .selector-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-bottom: 2.2rem;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
         .selector-item {
             flex: 1 1 250px;
+            min-width: 200px;
         }
         label {
             display: block;
@@ -73,7 +76,7 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #1a4d62;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
         select {
             width: 100%;
@@ -106,60 +109,75 @@
             background: #ffffffd9;
             backdrop-filter: blur(2px);
             border-radius: 1.8rem;
-            padding: 1.8rem;
-            margin: 2rem 0 1.5rem;
+            padding: 1.5rem 1.2rem;
+            margin: 1.5rem 0 1.2rem;
             border: 1px solid white;
         }
         .row {
             display: flex;
             flex-wrap: wrap;
-            align-items: baseline;
+            align-items: center;
             justify-content: space-between;
-            gap: 1.5rem;
+            gap: 1rem;
         }
         .current-time {
             background: #dde9f2;
             border-radius: 40px;
-            padding: 0.5rem 1.2rem;
-            font-size: 1.1rem;
+            padding: 0.6rem 1.2rem;
+            font-size: 1rem;
             color: #0b3f55;
             font-weight: 500;
-            white-space: nowrap;
+            white-space: normal;
+            word-break: break-word;
+            flex: 1 1 auto;
+            text-align: center;
+        }
+        .row .current-time:first-child {
+            text-align: left;
+        }
+        .row .current-time:last-child {
+            text-align: right;
+        }
+        .row span.arrow {
+            font-size: 1.5rem;
+            color: #547a92;
         }
         .converter-box {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 1rem;
+            gap: 0.8rem;
             margin-top: 1.5rem;
         }
         .datetime-input {
-            flex: 2 1 260px;
+            flex: 3 1 260px;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.4rem;
             background: #f2f6fa;
             border-radius: 50px;
-            padding: 0.25rem 0.25rem 0.25rem 1.5rem;
+            padding: 0.2rem 0.2rem 0.2rem 1.2rem;
             border: 1px solid #c2d9e9;
+            min-width: 240px;
         }
         .datetime-input label {
             margin: 0;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
             color: #1e4c6b;
             font-weight: 500;
             text-transform: none;
+            padding-right: 0.2rem;
         }
         .datetime-input input {
             background: white;
             border: none;
-            padding: 0.6rem 1rem;
+            padding: 0.6rem 0.8rem;
             border-radius: 40px;
             font-size: 0.95rem;
             flex: 1;
             border: 1px solid transparent;
             transition: 0.1s;
-            min-width: 180px;
+            min-width: 160px;
         }
         .datetime-input input:focus {
             outline: none;
@@ -169,15 +187,17 @@
             background: #2f86b3;
             border: none;
             color: white;
-            padding: 0.6rem 1.4rem;
+            padding: 0.7rem 1.4rem;
             border-radius: 60px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 1rem;
             cursor: pointer;
             transition: 0.15s;
             box-shadow: 0 8px 14px -8px #1e5c80;
             border: 1px solid #ffffff50;
             white-space: nowrap;
+            flex: 1 0 auto;
+            min-width: 120px;
         }
         .now-btn:hover {
             background: #1e6f9f;
@@ -186,21 +206,23 @@
         .result-area {
             background: #edf4fa;
             border-radius: 2rem;
-            padding: 1.5rem 2rem;
+            padding: 1.2rem 1.5rem;
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 600;
             color: #032b38;
             box-shadow: inset 0 1px 5px #b5cedf;
             word-break: break-word;
+            margin-top: 1.2rem;
         }
         .result-label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 400;
             color: #1b5a79;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.4rem;
+            white-space: normal;
         }
         .footnote {
             font-size: 0.8rem;
@@ -214,6 +236,77 @@
             color: #124f6b;
             text-decoration: none;
             font-weight: 500;
+        }
+
+        /* Mobile improvements */
+        @media (max-width: 600px) {
+            .card {
+                padding: 1.2rem 1.2rem 1.8rem;
+                border-radius: 1.8rem;
+            }
+            h1 {
+                font-size: 1.6rem;
+                gap: 0.3rem;
+            }
+            .sub {
+                font-size: 0.9rem;
+                margin-bottom: 1.2rem;
+            }
+            .selector-grid {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            .row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .row .current-time {
+                text-align: center !important;
+                width: 100%;
+            }
+            .row span.arrow {
+                display: none; /* hide arrow on small screens, use vertical spacing */
+            }
+            .converter-box {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .datetime-input {
+                width: 100%;
+                padding-left: 1rem;
+            }
+            .now-btn {
+                width: 100%;
+            }
+            .result-area {
+                font-size: 1.2rem;
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.4rem;
+            }
+            .current-time {
+                font-size: 0.9rem;
+                padding: 0.5rem 0.8rem;
+            }
+            .datetime-input input {
+                font-size: 0.85rem;
+                padding: 0.5rem;
+            }
+            .now-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+            .result-area {
+                font-size: 1rem;
+            }
+            .footnote span {
+                display: block;
+                margin-top: 0.3rem;
+            }
         }
     </style>
 </head>
@@ -243,7 +336,7 @@
         <div class="time-panel">
             <div class="row">
                 <div class="current-time" id="fromCurrent">—</div>
-                <div style="font-size: 1.2rem; color:#547a92;">➡️</div>
+                <span class="arrow">➡️</span>
                 <div class="current-time" id="toCurrent">—</div>
             </div>
 
@@ -266,7 +359,7 @@
         <div class="footnote">
             ⚡ timezone data by <a href="https://momentjs.com/timezone/" target="_blank">moment-timezone</a> · 
             grouped by region — find your country/state easily.<br>
-            <span style="opacity:0.7;">🇺🇸 type “New York” · 🇬🇧 “London” · 🇮🇳 “Kolkata” · 🇦🇺 “Sydney”</span>
+            <span>🇺🇸 type “New York” · 🇬🇧 “London” · 🇮🇳 “Kolkata” · 🇦🇺 “Sydney”</span>
         </div>
     </div>
 
